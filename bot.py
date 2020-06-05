@@ -76,7 +76,6 @@ def reply(msg):
 
 
 def button_press(msg):
-    print(msg)
     query_id, chatId, query_data = glance(msg, flavor="callback_query")
     query_split = query_data.split("#")
     message_id = int(query_split[1])
