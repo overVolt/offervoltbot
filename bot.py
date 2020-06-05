@@ -76,13 +76,13 @@ def reply(msg):
 
 
 def button_press(msg):
-    chatId, query_data = glance(msg, flavor="callback_query")[1:3]
+    query_id, chatId, query_data = glance(msg, flavor="callback_query")
     query_split = query_data.split("#")
     message_id = int(query_split[1])
     button = query_split[0]
 
-    if button == "openscontino" or button == "error":
-        print("deleted")
+    if button == "error":
+        bot.answerCallbackQuery(query_id, "Elimino...", True, "tg://resolve?domain=Scontino_bot")
         bot.deleteMessage((forwardChannel, message_id))
 
 
