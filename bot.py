@@ -69,21 +69,29 @@ def reply(msg):
                                parse_mode="HTML", disable_web_page_preview=True, reply_markup=None)
 
         if helpers.short(link):
-            bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.open_scontino(helpers.short(link), sent['message_id']))
+            bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.link_prenota(helpers.short(link), sent['message_id']))
         else:
-            bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.link_error(sent['message_id']))
+            bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.error_prenota(sent['message_id']))
         bot.sendMessage(chatId, choice(messages), parse_mode="HTML")
 
 
 def button_press(msg):
+    print(msg)
     query_id, chatId, query_data = glance(msg, flavor="callback_query")
     query_split = query_data.split("#")
     message_id = int(query_split[1])
     button = query_split[0]
 
     if button == "error":
-        bot.answerCallbackQuery(query_id, "Elimino...", True, "tg://resolve?domain=Scontino_bot")
-        bot.deleteMessage((forwardChannel, message_id))
+        bot.answerCallbackQuery(query_id, "Non sono riuscito a creare il link per Scontino.")
+
+    elif button == "prenotato":
+        linkid = query_split[2]
+        bot.answerCallbackQuery(query_id, "Offerta prenotata!")
+        if linkid != -1:
+            bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.open_scontino(linkid))
+        else:
+            bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.error(message_id))
 
 
 def accept_message(msg):
