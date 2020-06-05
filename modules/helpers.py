@@ -37,4 +37,7 @@ def short(url):
         linkId = data["id"].replace("amzn.to/", "").replace("bit.ly/", "")
         return linkId
     except Exception:
+        if url.startswith("http://bit.ly/") or url.startswith("https://bit.ly/") or url.startswith("bit.ly/") \
+            or url.startswith("http://amzn.to/") or url.startswith("https://amzn.to/") or url.startswith("amzn.to/"):
+            return url.split("/")[-1]
         return None

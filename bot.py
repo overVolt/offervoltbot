@@ -16,7 +16,7 @@ except FileNotFoundError:
 
 bot = Bot(token)
 
-forwardChannel = 123456789
+forwardChannel = -1001291488189
 messages = [
     "Grazie!", "Grazie per la segnalazione!", "Grazie dell'aiuto!",
     "Grazie 💪🏻", "Grazie per la segnalazione 💚", "Grazie dell'aiuto 💚"
@@ -36,14 +36,8 @@ def reply(msg):
     else:
         text = ""
 
-    ## Messaggio non contiene un link: modalità limitatibot
-    if not helpers.getLink(msg):
-        for a in helpers.isAdmin():
-            bot.forwardMessage(a, chatId, msg['message_id'])
-        bot.sendMessage(chatId, "<i>Messaggio inviato.</i>", parse_mode="HTML")
-
     ## Admin ha risposto ad un messaggio di testo
-    elif "reply_to_message" in msg and helpers.isAdmin(chatId):
+    if "reply_to_message" in msg and helpers.isAdmin(chatId):
         try:
             userId = msg['reply_to_message']['forward_from']['id']
             userName = msg['reply_to_message']['forward_from']['first_name']
@@ -59,6 +53,12 @@ def reply(msg):
                                    "".format(chatId, name, userId, userName, text), parse_mode="HTML")
         except Exception:
             bot.sendMessage(chatId, "Errore nell'invio.")
+
+    ## Messaggio non contiene un link: modalità limitatibot
+    elif not helpers.getLink(msg):
+        for a in helpers.isAdmin():
+            bot.forwardMessage(a, chatId, msg['message_id'])
+        bot.sendMessage(chatId, "<i>Messaggio inviato.</i>", parse_mode="HTML")
 
     ## Messaggio contiene link: logga offerta e rispondi
     else:
