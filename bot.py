@@ -76,7 +76,6 @@ def reply(msg):
 
 
 def button_press(msg):
-    print(msg)
     query_id, chatId, query_data = glance(msg, flavor="callback_query")
     query_split = query_data.split("#")
     message_id = int(query_split[1])
@@ -90,7 +89,7 @@ def button_press(msg):
         prevText = msg['message']['text']
         bot.answerCallbackQuery(query_id, "Offerta prenotata!")
         bot.editMessageText((forwardChannel, message_id), prevText.replace("<b>Nuovo messaggio!</b>\n",
-                                "<b>[Offerta prenotata da {}]</b>\n".format(msg['message']['from']['first_name'])), parse_mode="HTML")
+                                "<b>[Offerta prenotata da {}]</b>\n".format(msg['from']['first_name'])), parse_mode="HTML")
         if linkid != -1:
             bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.open_scontino(linkid))
         else:
