@@ -81,7 +81,8 @@ def button_press(msg):
     message_id = int(query_split[1])
     button = query_split[0]
 
-    if button == "openscontino":
+    if button == "openscontino" or button == "error":
+        print("deleted")
         bot.deleteMessage((forwardChannel, message_id))
 
 

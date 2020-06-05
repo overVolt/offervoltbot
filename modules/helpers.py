@@ -1,4 +1,4 @@
-adminIds = []
+adminIds = [368894926]
 
 def isAdmin(chatId: int=-1):
     if chatId > 0:

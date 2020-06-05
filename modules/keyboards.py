@@ -3,7 +3,7 @@ from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
 def link_error(msg_id):
     return InlineKeyboardMarkup(inline_keyboard=[[
-                InlineKeyboardButton(text="❌ Errore col link.", callback_data="error#{}".format(msg_id))
+                InlineKeyboardButton(text="❌ Prenota ed elimina", callback_data="error#{}".format(msg_id))
             ]])
 
 def open_scontino(link_id, msg_id):
