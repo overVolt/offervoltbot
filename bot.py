@@ -16,11 +16,17 @@ except FileNotFoundError:
 
 bot = Bot(token)
 
-forwardChannel = -1001291488189
-messages = [
-    "Grazie!", "Grazie per la segnalazione!", "Grazie dell'aiuto!",
-    "Grazie 💪🏻", "Grazie per la segnalazione 💚", "Grazie dell'aiuto 💚"
-]
+forwardChannel = -1001320236537
+messages = {
+    "start": "<b>Ciao, {}!</b> Sono il bot di @offervolt.\n"
+             "Inviami un link se vuoi segnalare un'offerta, oppure puoi chiedere informazioni su prodotti o "
+             "richiedere coupon inviandomi un messaggio!",
+    "msg_sent": "<i>Messaggio inviato.</i>",
+    "thanks": [
+        "Grazie!", "Grazie per la segnalazione!", "Grazie dell'aiuto!",
+        "Grazie 💪🏻", "Grazie per la segnalazione 💚", "Grazie dell'aiuto 💚"
+    ]
+}
 
 
 def reply(msg):
@@ -42,7 +48,7 @@ def reply(msg):
             userId = msg['reply_to_message']['forward_from']['id']
             userName = msg['reply_to_message']['forward_from']['first_name']
             if msg['reply_to_message']['forward_from']['last_name']:
-                name += " " + msg['reply_to_message']['forward_from']['last_name']
+                userName += " " + msg['reply_to_message']['forward_from']['last_name']
 
             bot.sendMessage(userId, "💬 <b>Risposta dello staff</b>\n"
                                     "{}".format(text), parse_mode="HTML")
@@ -56,9 +62,13 @@ def reply(msg):
 
     ## Messaggio non contiene un link: modalità limitatibot
     elif not helpers.getLink(msg):
-        for a in helpers.isAdmin():
-            bot.forwardMessage(a, chatId, msg['message_id'])
-        bot.sendMessage(chatId, "<i>Messaggio inviato.</i>", parse_mode="HTML")
+        if text.startswith("/"):
+            bot.sendMessage(chatId, messages["start"].format(msg['from']['first_name']), parse_mode="HTML")
+
+        else:
+            for a in helpers.isAdmin():
+                bot.forwardMessage(a, chatId, msg['message_id'])
+            bot.sendMessage(chatId, messages["msg_sent"], parse_mode="HTML")
 
     ## Messaggio contiene link: logga offerta e rispondi
     else:
@@ -72,7 +82,7 @@ def reply(msg):
             bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.link_prenota(helpers.short(link), sent['message_id']))
         else:
             bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.error_prenota(sent['message_id']))
-        bot.sendMessage(chatId, choice(messages), parse_mode="HTML")
+        bot.sendMessage(chatId, choice(messages["thanks"]), parse_mode="HTML")
 
 
 def button_press(msg):
