@@ -1,4 +1,5 @@
 from telepot import Bot, glance
+from telepot.exception import TelegramError, BotWasBlockedError
 from time import sleep
 from threading import Thread
 from modules import helpers, keyboards
@@ -55,8 +56,11 @@ def reply(msg):
             bot.sendMessage(chatId, "Risposta inviata!")
             otherAdmins = [a for a in helpers.isAdmin() if a != chatId]
             for a in otherAdmins:
-                bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>: <i>{}</i>"
-                                   "".format(chatId, name, userId, userName, text), parse_mode="HTML")
+                try:
+                    bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>: <i>{}</i>"
+                                        "".format(chatId, name, userId, userName, text), parse_mode="HTML")
+                except (TelegramError, BotWasBlockedError):
+                    pass
         except Exception as e:
             bot.sendMessage(chatId, "Errore nell'invio.\n\n"
                                     "<i>Debug Info:</i>\n"
@@ -70,7 +74,10 @@ def reply(msg):
 
         else:
             for a in helpers.isAdmin():
-                bot.forwardMessage(a, chatId, msg['message_id'])
+                try:
+                    bot.forwardMessage(a, chatId, msg['message_id'])
+                except (TelegramError, BotWasBlockedError):
+                    pass
             bot.sendMessage(chatId, messages["msg_sent"], parse_mode="HTML")
 
     ## Messaggio contiene link: logga offerta e rispondi
