@@ -18,7 +18,7 @@ bot = Bot(token)
 
 forwardChannel = -1001320236537
 messages = {
-    "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"tg://resolve?domain=offerVolt\"offerVolt.\n"
+    "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"tg://resolve?domain=offerVolt\">offerVolt</a>.\n"
              "Inviami un link se vuoi segnalare un'offerta, oppure puoi chiedere informazioni su prodotti o "
              "richiedere coupon inviandomi un messaggio!",
     "msg_sent": "<i>Messaggio inviato.</i>",
