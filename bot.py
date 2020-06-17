@@ -18,7 +18,7 @@ bot = Bot(token)
 
 forwardChannel = -1001320236537
 messages = {
-    "start": "<b>Ciao, {}!</b> Sono il bot di @offervolt.\n"
+    "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"tg://resolve?domain=offerVolt\"offerVolt.\n"
              "Inviami un link se vuoi segnalare un'offerta, oppure puoi chiedere informazioni su prodotti o "
              "richiedere coupon inviandomi un messaggio!",
     "msg_sent": "<i>Messaggio inviato.</i>",
@@ -57,11 +57,14 @@ def reply(msg):
             for a in otherAdmins:
                 bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>: <i>{}</i>"
                                    "".format(chatId, name, userId, userName, text), parse_mode="HTML")
-        except Exception:
-            bot.sendMessage(chatId, "Errore nell'invio.")
+        except Exception as e:
+            bot.sendMessage(chatId, "Errore nell'invio.\n\n"
+                                    "<i>Debug Info:</i>\n"
+                                    "<code>{}</code>".format(e), parse_mode="HTML")
 
     ## Messaggio non contiene un link: modalità limitatibot
     elif not helpers.getLink(msg):
+        # Comando bot
         if text.startswith("/"):
             bot.sendMessage(chatId, messages["start"].format(msg['from']['first_name']), parse_mode="HTML")
 
