@@ -27,7 +27,7 @@ messages = {
 def reply(msg):
     chatId = msg['chat']['id']
     name = msg['from']['first_name']
-    if msg['from']['last_name']:
+    if "last_name" in msg['from']:
         name += " " + msg['from']['last_name']
 
     if "text" in msg:
@@ -42,7 +42,7 @@ def reply(msg):
         try:
             userId = msg['reply_to_message']['forward_from']['id']
             userName = msg['reply_to_message']['forward_from']['first_name']
-            if msg['reply_to_message']['forward_from']['last_name']:
+            if "last_name" in msg['reply_to_message']['forward_from']:
                 userName += " " + msg['reply_to_message']['forward_from']['last_name']
 
             bot.sendMessage(userId, "💬 <b>Risposta dello staff</b>\n"
