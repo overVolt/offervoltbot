@@ -1,11 +1,10 @@
-adminIds = [
-    368894926,
-    500610349,
-    164527323,
-    50967453,
-    173414196,
-    77080264
-]
+from json import load as jsload
+from os.path import abspath, dirname, join
+
+with open(join(dirname(abspath(__file__)), "../settings.json")) as settings_file:
+    settings = jsload(settings_file)
+
+adminIds = settings["admins"]
 
 
 def isAdmin(chatId: int=-1):

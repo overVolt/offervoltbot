@@ -4,20 +4,14 @@ from time import sleep
 from threading import Thread
 from modules import helpers, keyboards
 from random import choice
+from json import load as jsload
+from os.path import abspath, dirname, join
 
-try:
-    f = open('token.txt', 'r')
-    token = f.readline().strip()
-    f.close()
-except FileNotFoundError:
-    token = input(" * Incolla qui il token di BotFather: ")
-    f = open('token.txt', 'w')
-    f.write(token)
-    f.close()
+with open(join(dirname(abspath(__file__)), "settings.json")) as settings_file:
+    settings = jsload(settings_file)
 
-bot = Bot(token)
-
-forwardChannel = -1001320236537
+bot = Bot(settings["token"])
+forwardChannel = settings["forwardChannel"]
 messages = {
     "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"tg://resolve?domain=offerVolt\">offerVolt</a>.\n"
              "Inviami un link se vuoi segnalare un'offerta, oppure puoi chiedere informazioni su prodotti o "
