@@ -8,7 +8,7 @@ class User(db.Entity):
     name = Required(str)
     status = Required(str, default="normal")
     muted = Required(bool, default=False)
-    messages = Set(lambda: Message, reverse='user')
+    messages = Set(lambda: Message, reverse='fromUser')
 
 
 class Message(db.Entity):
