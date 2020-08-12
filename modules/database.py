@@ -1,4 +1,4 @@
-from pony.orm import Database, Required, Json
+from pony.orm import Database, Required, Json, Set
 
 db = Database("sqlite", "../offervoltbot.db", create_db=True)
 
@@ -8,6 +8,7 @@ class User(db.Entity):
     name = Required(str)
     status = Required(str, default="normal")
     muted = Required(bool, default=False)
+    messages = Set(lambda: Message, reverse='user')
 
 
 class Message(db.Entity):
