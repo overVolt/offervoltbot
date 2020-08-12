@@ -62,7 +62,7 @@ def reply(msg):
     # Genera entry nel database
     if not User.exists(lambda u: u.chatId == chatId):
         isNewUser = True
-        User(chatId=chatId)
+        User(chatId=chatId, name=name)
 
     user = User.get(chatId=chatId)
     user.name = name
