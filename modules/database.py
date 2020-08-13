@@ -4,7 +4,7 @@ db = Database("sqlite", "../offervoltbot.db", create_db=True)
 
 
 class User(db.Entity):
-    chatId = Required(int)
+    chatId = Required(int, unique=True)
     name = Required(str)
     status = Required(str, default="normal")
     muted = Required(bool, default=False)

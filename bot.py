@@ -5,7 +5,7 @@ from threading import Thread
 from random import choice
 from json import load as jsload
 from os.path import abspath, dirname, join
-from pony.orm import db_session, select, commit
+from pony.orm import db_session, select
 
 from modules import helpers, keyboards
 from modules.database import User, Message
@@ -45,8 +45,8 @@ messages = {
 
 @db_session
 def reply(msg):
-    chatId = msg['chat']['id']
-    msgId = msg['message_id']
+    chatId = int(msg['chat']['id'])
+    msgId = int(msg['message_id'])
     name = msg['from']['first_name']
     if "last_name" in msg['from']:
         name += " " + msg['from']['last_name']
@@ -58,14 +58,14 @@ def reply(msg):
     else:
         text = ""
 
-    isNewUser = False
     # Genera entry nel database
     if not User.exists(lambda u: u.chatId == chatId):
         isNewUser = True
-        User(chatId=chatId, name=name)
-
-    user = User.get(chatId=chatId)
-    user.name = name
+        user = User(chatId=chatId, name=name)
+    else:
+        isNewUser = False
+        user = User.get(chatId=chatId)
+        user.name = name
 
     ## Admin ha risposto ad un messaggio di testo
     if "reply_to_message" in msg and helpers.isAdmin(chatId):
@@ -74,9 +74,9 @@ def reply(msg):
 
             # Cerca i dati del messaggio dal database
             origMsg = None
-            dbQuery = select(message.id for message in Message if message.sentIds[chatId] == quotedMessage['message_id'])[:]
+            dbQuery = select(m for m in Message if m.sentIds[str(chatId)] == int(quotedMessage['message_id']))[:]
             if len(dbQuery) > 0:
-                origMsg = Message.get(id=dbQuery[0])
+                origMsg = dbQuery[0]
                 userId = origMsg.fromUser.chatId
                 userName = origMsg.fromUser.name
 
@@ -107,7 +107,7 @@ def reply(msg):
                                             "Usa /muta per mutarlo di nuovo.")
                     bot.sendMessage(origMsg.fromUser.chatId, "🔉 Puoi nuovamente inviare messaggi al bot!")
                 elif text == "/listmuted":
-                    mutedUsers = select(user for user in User if user.muted)[:]
+                    mutedUsers = select(u for u in User if u.muted)[:]
                     mutedList = ""
                     for u in mutedUsers:
                         mutedList += "- <a href=\"tg://user?id={}\">{}</a>\n".format(u.chatId, u.name)
@@ -161,7 +161,7 @@ def reply(msg):
             for a in helpers.isAdmin():
                 try:
                     sentMsg = bot.forwardMessage(a, chatId, msg['message_id'])
-                    sentIdsCache[a] = sentMsg['message_id']
+                    sentIdsCache[str(a)] = int(sentMsg['message_id'])
                 except (TelegramError, BotWasBlockedError):
                     pass
 
