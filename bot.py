@@ -77,8 +77,11 @@ def reply(msg):
         mutedList = ""
         for u in mutedUsers:
             mutedList += "- <a href=\"tg://user?id={}\">{}</a>\n".format(u.chatId, u.name)
-        bot.sendMessage(chatId, "🔇 <b>Lista utenti mutati</b>\n"
-                                "{}".format(mutedList))
+        if mutedList:
+            bot.sendMessage(chatId, "🔇 <b>Lista utenti mutati:</b>\n"
+                                    "{}".format(mutedList), parse_mode="HTML")
+        else:
+            bot.sendMessage(chatId, "🔇 <b>Nessun utente mutato!</b>", parse_mode="HTML")
 
     elif text == "/start":
         if isNewUser:
@@ -122,12 +125,12 @@ def reply(msg):
                 if text == "/mute":
                     origMsg.fromUser.muted = True
                     bot.sendMessage(chatId, "🔇 Utente mutato.\n"
-                                            "Usa /smuta per smutarlo.")
+                                            "Usa /unmute per smutarlo.")
                     bot.sendMessage(origMsg.fromUser.chatId, "🔇 Sei stato mutato da un admin.")
                 elif text == "/unmute":
                     origMsg.fromUser.muted = False
                     bot.sendMessage(chatId, "🔉 Utente smutato.\n"
-                                            "Usa /muta per mutarlo di nuovo.")
+                                            "Usa /mute per mutarlo di nuovo.")
                     bot.sendMessage(origMsg.fromUser.chatId, "🔉 Puoi nuovamente inviare messaggi al bot!")
                 else:
                     bot.sendMessage(chatId, messages["command_ukn"], parse_mode="HTML")
