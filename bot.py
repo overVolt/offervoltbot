@@ -146,14 +146,14 @@ def reply(msg):
                 otherAdmins = [a for a in helpers.isAdmin() if a != chatId]
                 for a in otherAdmins:
                     try:
-                        replyToId = origMsg.sentIds[a] if origMsg else None
+                        replyToId = origMsg.sentIds[str(a)] if origMsg else None
                         if replyToId:
                             bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto:\n"
                                                "<i>{}</i>".format(chatId, name, text), parse_mode="HTML", reply_to_message_id=replyToId)
                         else:
                             bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>:\n"
                                                "<i>{}</i>".format(chatId, name, userId, userName, text), parse_mode="HTML")
-                    except (TelegramError, BotWasBlockedError):
+                    except (TelegramError, BotWasBlockedError, KeyError):
                         pass
 
         except Exception as e:
