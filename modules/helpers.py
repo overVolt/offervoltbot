@@ -31,7 +31,7 @@ def short(url):
         escaped = "http://" + url
 
     headers = {
-        "Authorization": "Bearer e8de1a5482420f3dbd0790fdffa93ba6e415d7f9",
+        "Authorization": settings["bitlyToken"],
         "Content-Type": "application/json"
     }
     params = {
