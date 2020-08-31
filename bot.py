@@ -148,13 +148,13 @@ def reply(msg):
                     try:
                         replyToId = origMsg.sentIds[str(a)] if origMsg else None
                         if replyToId:
-                            bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto:\n"
-                                               "<i>{}</i>".format(chatId, name, text), parse_mode="HTML", reply_to_message_id=replyToId)
-                        else:
-                            bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>:\n"
-                                               "<i>{}</i>".format(chatId, name, userId, userName, text), parse_mode="HTML")
+                            bot.deleteMessage((a, replyToId))
+                        bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>:\n"
+                                           "<i>{}</i>".format(chatId, name, userId, userName, text), parse_mode="HTML")
                     except (TelegramError, BotWasBlockedError, KeyError):
                         pass
+
+                bot.deleteMessage((chatId, quotedMessage['message_id']))
 
         except Exception as e:
             bot.sendMessage(chatId, "😔 <b>Errore nell'invio.</b>\n\n"
