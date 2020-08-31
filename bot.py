@@ -202,6 +202,7 @@ def reply(msg):
                                                "<i>Da:</i> <a href=\"tg://user?id={}\">{}</a>\n\n"
                                                "{}".format(chatId, name, text),
                                parse_mode="HTML", disable_web_page_preview=True, reply_markup=None)
+        Message(fromUser=user, fromMsgId=msgId, sentIds={str(forwardChannel): int(sent['message_id'])})
 
         if helpers.short(link):
             bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.link_prenota(helpers.short(link), sent['message_id']))
@@ -227,9 +228,19 @@ def button_press(msg):
         bot.editMessageText((forwardChannel, message_id), prevText.replace("Nuovo messaggio!\n",
                                 "<b>[Offerta prenotata da {}]</b>\n".format(msg['from']['first_name'])), parse_mode="HTML")
         if linkid != -1:
-            bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.open_scontino(linkid))
+            bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.open_scontino(linkid, message_id))
         else:
             bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.error(message_id))
+
+    elif button == "richiesta":
+        prevText = msg['message']['text']
+        bot.answerCallbackQuery(query_id, "Richiesta prenotata!")
+        sent = bot.sendMessage(chatId, prevText.replace("Nuovo messaggio!\n", "<b>[Richiesta prenotata]</b>\n"), parse_mode="HTML")
+        dbQuery = select(m for m in Message if m.sentIds[str(forwardChannel)] == message_id)[:]
+        if len(dbQuery) > 0:
+            origMsg = dbQuery[0]
+            origMsg.sentIds = {str(chatId): int(sent['message_id'])}
+        bot.deleteMessage((forwardChannel, message_id))
 
 
 def accept_message(msg):
