@@ -61,154 +61,160 @@ def reply(msg):
     else:
         text = ""
 
-    # Genera entry nel database
-    if not User.exists(lambda u: u.chatId == chatId):
-        isNewUser = True
-        user = User(chatId=chatId, name=name)
-    else:
-        isNewUser = False
-        user = User.get(chatId=chatId)
-        user.name = name
+    ## Messaggio da canale interno
+    if chatId == -1001298078411:
+        print(msg)
 
-
-    # Comandi bot
-    if text == "/listmuted" and helpers.isAdmin(chatId):
-        mutedUsers = select(u for u in User if u.muted)[:]
-        mutedList = ""
-        for u in mutedUsers:
-            mutedList += "- <a href=\"tg://user?id={}\">{}</a>\n".format(u.chatId, u.name)
-        if mutedList:
-            bot.sendMessage(chatId, "🔇 <b>Lista utenti mutati:</b>\n"
-                                    "{}".format(mutedList), parse_mode="HTML")
+    ## Messaggio da chat normali
+    elif chatId > 0:
+        # Genera entry nel database
+        if not User.exists(lambda u: u.chatId == chatId):
+            isNewUser = True
+            user = User(chatId=chatId, name=name)
         else:
-            bot.sendMessage(chatId, "🔇 <b>Nessun utente mutato!</b>", parse_mode="HTML")
+            isNewUser = False
+            user = User.get(chatId=chatId)
+            user.name = name
 
-    elif text == "/start":
-        if isNewUser:
+
+        # Comandi bot
+        if text == "/listmuted" and helpers.isAdmin(chatId):
+            mutedUsers = select(u for u in User if u.muted)[:]
+            mutedList = ""
+            for u in mutedUsers:
+                mutedList += "- <a href=\"tg://user?id={}\">{}</a>\n".format(u.chatId, u.name)
+            if mutedList:
+                bot.sendMessage(chatId, "🔇 <b>Lista utenti mutati:</b>\n"
+                                        "{}".format(mutedList), parse_mode="HTML")
+            else:
+                bot.sendMessage(chatId, "🔇 <b>Nessun utente mutato!</b>", parse_mode="HTML")
+
+        elif text == "/start":
+            if isNewUser:
+                bot.sendMessage(chatId, messages["help"], parse_mode="HTML")
+            else:
+                bot.sendMessage(chatId, messages["start"].format(msg['from']['first_name']), parse_mode="HTML")
+
+        elif text == "/help":
             bot.sendMessage(chatId, messages["help"], parse_mode="HTML")
-        else:
-            bot.sendMessage(chatId, messages["start"].format(msg['from']['first_name']), parse_mode="HTML")
-
-    elif text == "/help":
-        bot.sendMessage(chatId, messages["help"], parse_mode="HTML")
 
 
-    ## Admin ha risposto ad un messaggio di testo
-    elif "reply_to_message" in msg and helpers.isAdmin(chatId):
-        try:
-            quotedMessage = msg['reply_to_message']
-
-            # Cerca i dati del messaggio dal database
-            origMsg = None
-            dbQuery = select(m for m in Message if m.sentIds[str(chatId)] == int(quotedMessage['message_id']))[:]
-            if len(dbQuery) > 0:
-                origMsg = dbQuery[0]
-                userId = origMsg.fromUser.chatId
-                userName = origMsg.fromUser.name
-
-            else:
-                # Cerca di capire le informazioni da Telegram
-                if "forward_from" in quotedMessage:
-                    userId = quotedMessage['forward_from']['id']
-                    userName = quotedMessage['forward_from']['first_name']
-                    if "last_name" in quotedMessage['forward_from']:
-                        userName += " " + msg['reply_to_message']['forward_from']['last_name']
-
-                else:
-                    bot.sendMessage(chatId, "😔 <b>Errore nell'invio.</b>\n\n"
-                                            "L'utente ha attivato la privacy per i messaggi inoltrati, e il "
-                                            "messaggio non è nel database.", parse_mode="HTML")
-                    return
-
-            # Controlla se è un comando di servizio
-            if text.startswith("/"):
-                if text == "/mute":
-                    origMsg.fromUser.muted = True
-                    bot.sendMessage(chatId, "🔇 Utente mutato.\n"
-                                            "Usa /unmute per smutarlo.")
-                    bot.sendMessage(origMsg.fromUser.chatId, "🔇 Sei stato mutato da un admin.")
-                elif text == "/unmute":
-                    origMsg.fromUser.muted = False
-                    bot.sendMessage(chatId, "🔉 Utente smutato.\n"
-                                            "Usa /mute per mutarlo di nuovo.")
-                    bot.sendMessage(origMsg.fromUser.chatId, "🔉 Puoi nuovamente inviare messaggi al bot!")
-                else:
-                    bot.sendMessage(chatId, messages["command_ukn"], parse_mode="HTML")
-
-            # Altrimenti, invia risposta a utente
-            else:
-                replyToId = origMsg.fromMsgId if origMsg else None
-                bot.sendMessage(userId, "💬 <b>Risposta dello staff</b>\n"
-                                        "{}".format(text), parse_mode="HTML", reply_to_message_id=replyToId)
-                bot.sendMessage(chatId, "Risposta inviata!")
-
-                # Segnala ad altri admin la risposta data
-                otherAdmins = [a for a in helpers.isAdmin() if a != chatId]
-                for a in otherAdmins:
-                    try:
-                        replyToId = origMsg.sentIds[str(a)] if origMsg else None
-                        if replyToId:
-                            bot.deleteMessage((a, replyToId))
-                        bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>:\n"
-                                           "<i>{}</i>".format(chatId, name, userId, userName, text), parse_mode="HTML")
-                    except (TelegramError, BotWasBlockedError, KeyError):
-                        pass
-
-                bot.deleteMessage((chatId, quotedMessage['message_id']))
-
-        except Exception as e:
-            bot.sendMessage(chatId, "😔 <b>Errore nell'invio.</b>\n\n"
-                                    "<i>Debug Info:</i>\n"
-                                    "<code>{}</code>".format(e), parse_mode="HTML")
-            return
-
-
-    ## Messaggio non contiene un link: modalità limitatibot
-    elif not helpers.getLink(msg):
-        if user.muted:
-            bot.sendMessage(chatId, messages["muted"], parse_mode="HTML")
-            return
-        if text.startswith("/"):
-            bot.sendMessage(chatId, messages["command_ukn"], parse_mode="HTML")
-            return
-
-        sentIdsCache = {}
-        for a in helpers.isAdmin():
+        ## Admin ha risposto ad un messaggio di testo
+        elif "reply_to_message" in msg and helpers.isAdmin(chatId):
             try:
-                sentMsg = bot.forwardMessage(a, chatId, msg['message_id'])
-                sentIdsCache[str(a)] = int(sentMsg['message_id'])
-            except (TelegramError, BotWasBlockedError):
-                pass
+                quotedMessage = msg['reply_to_message']
 
-        # Se non c'è il messaggio nel database, è nuovo: salvalo
-        if not Message.exists(fromUser=user, fromMsgId=msgId):
-            Message(fromUser=user, fromMsgId=msgId, sentIds=sentIdsCache)
-        # Se esiste già il messaggio nel database, aggiorna i vecchi ID
+                # Cerca i dati del messaggio dal database
+                origMsg = None
+                dbQuery = select(m for m in Message if m.sentIds[str(chatId)] == int(quotedMessage['message_id']))[:]
+                if len(dbQuery) > 0:
+                    origMsg = dbQuery[0]
+                    userId = origMsg.fromUser.chatId
+                    userName = origMsg.fromUser.name
+
+                else:
+                    # Cerca di capire le informazioni da Telegram
+                    if "forward_from" in quotedMessage:
+                        userId = quotedMessage['forward_from']['id']
+                        userName = quotedMessage['forward_from']['first_name']
+                        if "last_name" in quotedMessage['forward_from']:
+                            userName += " " + msg['reply_to_message']['forward_from']['last_name']
+
+                    else:
+                        bot.sendMessage(chatId, "😔 <b>Errore nell'invio.</b>\n\n"
+                                                "L'utente ha attivato la privacy per i messaggi inoltrati, e il "
+                                                "messaggio non è nel database.", parse_mode="HTML")
+                        return
+
+                # Controlla se è un comando di servizio
+                if text.startswith("/"):
+                    if text == "/mute":
+                        origMsg.fromUser.muted = True
+                        bot.sendMessage(chatId, "🔇 Utente mutato.\n"
+                                                "Usa /unmute per smutarlo.")
+                        bot.sendMessage(origMsg.fromUser.chatId, "🔇 Sei stato mutato da un admin.")
+                    elif text == "/unmute":
+                        origMsg.fromUser.muted = False
+                        bot.sendMessage(chatId, "🔉 Utente smutato.\n"
+                                                "Usa /mute per mutarlo di nuovo.")
+                        bot.sendMessage(origMsg.fromUser.chatId, "🔉 Puoi nuovamente inviare messaggi al bot!")
+                    else:
+                        bot.sendMessage(chatId, messages["command_ukn"], parse_mode="HTML")
+
+                # Altrimenti, invia risposta a utente
+                else:
+                    replyToId = origMsg.fromMsgId if origMsg else None
+                    bot.sendMessage(userId, "💬 <b>Risposta dello staff</b>\n"
+                                            "{}".format(text), parse_mode="HTML", reply_to_message_id=replyToId)
+                    bot.sendMessage(chatId, "Risposta inviata!")
+
+                    # Segnala ad altri admin la risposta data
+                    otherAdmins = [a for a in helpers.isAdmin() if a != chatId]
+                    for a in otherAdmins:
+                        try:
+                            replyToId = origMsg.sentIds[str(a)] if origMsg else None
+                            if replyToId:
+                                bot.deleteMessage((a, replyToId))
+                            bot.sendMessage(a, "<a href=\"tg://user?id={}\">{}</a> ha risposto a <a href=\"tg://user?id={}\">{}</a>:\n"
+                                               "<i>{}</i>".format(chatId, name, userId, userName, text), parse_mode="HTML")
+                        except (TelegramError, BotWasBlockedError, KeyError):
+                            pass
+
+                    bot.deleteMessage((chatId, quotedMessage['message_id']))
+
+            except Exception as e:
+                bot.sendMessage(chatId, "😔 <b>Errore nell'invio.</b>\n\n"
+                                        "<i>Debug Info:</i>\n"
+                                        "<code>{}</code>".format(e), parse_mode="HTML")
+                return
+
+
+        ## Messaggio non contiene un link: modalità limitatibot
+        elif not helpers.getLink(msg):
+            if user.muted:
+                bot.sendMessage(chatId, messages["muted"], parse_mode="HTML")
+                return
+            if text.startswith("/"):
+                bot.sendMessage(chatId, messages["command_ukn"], parse_mode="HTML")
+                return
+
+            sentIdsCache = {}
+            for a in helpers.isAdmin():
+                try:
+                    sentMsg = bot.forwardMessage(a, chatId, msg['message_id'])
+                    sentIdsCache[str(a)] = int(sentMsg['message_id'])
+                except (TelegramError, BotWasBlockedError):
+                    pass
+
+            # Se non c'è il messaggio nel database, è nuovo: salvalo
+            if not Message.exists(fromUser=user, fromMsgId=msgId):
+                Message(fromUser=user, fromMsgId=msgId, sentIds=sentIdsCache)
+            # Se esiste già il messaggio nel database, aggiorna i vecchi ID
+            else:
+                oldMessage = Message.get(fromUser=user, fromMsgId=msgId)
+                oldMessage.sentIds = sentIdsCache
+
+            bot.sendMessage(chatId, messages["msg_sent"], parse_mode="HTML")
+
+
+        ## Messaggio contiene link: logga offerta e rispondi
         else:
-            oldMessage = Message.get(fromUser=user, fromMsgId=msgId)
-            oldMessage.sentIds = sentIdsCache
+            if user.muted:
+                bot.sendMessage(chatId, messages["muted"], parse_mode="HTML")
+                return
 
-        bot.sendMessage(chatId, messages["msg_sent"], parse_mode="HTML")
+            link = helpers.getLink(msg)
+            sent = bot.sendMessage(forwardChannel, "<b>Nuovo messaggio!</b>\n"
+                                                   "<i>Da:</i> <a href=\"tg://user?id={}\">{}</a>\n\n"
+                                                   "{}".format(chatId, name, text),
+                                   parse_mode="HTML", disable_web_page_preview=True, reply_markup=None)
+            Message(fromUser=user, fromMsgId=msgId, sentIds={str(forwardChannel): int(sent['message_id'])})
 
-
-    ## Messaggio contiene link: logga offerta e rispondi
-    else:
-        if user.muted:
-            bot.sendMessage(chatId, messages["muted"], parse_mode="HTML")
-            return
-
-        link = helpers.getLink(msg)
-        sent = bot.sendMessage(forwardChannel, "<b>Nuovo messaggio!</b>\n"
-                                               "<i>Da:</i> <a href=\"tg://user?id={}\">{}</a>\n\n"
-                                               "{}".format(chatId, name, text),
-                               parse_mode="HTML", disable_web_page_preview=True, reply_markup=None)
-        Message(fromUser=user, fromMsgId=msgId, sentIds={str(forwardChannel): int(sent['message_id'])})
-
-        if helpers.short(link):
-            bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.link_prenota(helpers.short(link), sent['message_id']))
-        else:
-            bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.error_prenota(sent['message_id']))
-        bot.sendMessage(chatId, choice(messages["thanks"]), parse_mode="HTML")
+            if helpers.short(link):
+                bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.link_prenota(helpers.short(link), sent['message_id']))
+            else:
+                bot.editMessageReplyMarkup((forwardChannel, sent['message_id']), keyboards.error_prenota(sent['message_id']))
+            bot.sendMessage(chatId, choice(messages["thanks"]), parse_mode="HTML")
 
 
 @db_session
