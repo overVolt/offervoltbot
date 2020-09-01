@@ -89,6 +89,17 @@ def reply(msg):
             else:
                 bot.sendMessage(chatId, "🔇 <b>Nessun utente mutato!</b>", parse_mode="HTML")
 
+        elif text.startswith("/annuncio ") and helpers.isAdmin(chatId):
+            bdText = text.split(" ", 1)[1]
+            pendingUsers = select(u.chatId for u in User)[:]
+            userCount = len(pendingUsers)
+            for uid in pendingUsers:
+                try:
+                    bot.sendMessage(uid, bdText, parse_mode="HTML", disable_web_page_preview=True)
+                except (TelegramError, BotWasBlockedError):
+                    userCount -= 1
+            bot.sendMessage(chatId, "📢 Messaggio inviato correttamente a {0} utenti!".format(userCount))
+
         elif text == "/start":
             if isNewUser:
                 bot.sendMessage(chatId, messages["help"], parse_mode="HTML")
