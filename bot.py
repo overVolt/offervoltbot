@@ -33,9 +33,15 @@ messages = {
             "- <i>Vorrei un kit per iniziare a volare in FPV sotto i 200€</i>\n"
             "- <i>Sto cercando un telefono per mia mamma, voglio spendere massimo 200€</i>\n"
             "- <i>Sto cercando un tablet per lo studio con la penna inclusa, ho tutto il budget del mondo</i>\n\n\n"
-            "Speriamo di poter essere utili!",
+            "Speriamo di poter essere utili!\n"
+            "<b>Nota: per quanto rapidi possiamo essere, ci arrivano ogni giorno più di 100 richieste diverse e noi "
+            "siamo comunque esseri umani: per favore porta pazienza se non ti rispondiamo subito :)\n"
+            "Potrebbe capitare che in mezzo a tutti i messaggi che ci arrivano ne perdiamo di vista qualcuno: se proprio vedi "
+            "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>",
     "msg_sent": "<b>Messaggio inviato!</b>\n"
-                "Un membro del team ti risponderà il prima possibile.",
+                "Un membro del team ti risponderà il prima possibile.\n"
+                "Ricordati che siamo in pochi a gestire tutte le richieste che ci arrivano: ci piacerebbe rispondere a "
+                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!",
     "command_ukn": "🤨 Comando sconosciuto.",
     "muted": "⛔ <b>Sei mutato.</b>\n"
              "Un admin ti ha temporaneamente limitato, quindi non puoi scrivere messaggi diretti allo staff.",
