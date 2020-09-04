@@ -67,6 +67,10 @@ def reply(msg):
     else:
         text = ""
 
+    # Rename it-m.banggood.com to desktop banggood.com
+    if "it-m.banggood.com" in text:
+        text = text.replace("it-m.banggood.com", "banggood.com")
+
     ## Messaggio da canale interno
     if chatId == -1001298078411:
         print(msg)
@@ -96,7 +100,7 @@ def reply(msg):
                 bot.sendMessage(chatId, "🔇 <b>Nessun utente mutato!</b>", parse_mode="HTML")
 
         elif text.startswith("/annuncio ") and helpers.isAdmin(chatId):
-            bdText = text.split(" ", 1)[1]
+            bdText = "📢 <b>Annuncio dallo staff</b>\n" + text.split(" ", 1)[1]
             pendingUsers = select(u.chatId for u in User)[:]
             userCount = len(pendingUsers)
             for uid in pendingUsers:

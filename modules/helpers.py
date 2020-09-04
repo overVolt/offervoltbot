@@ -29,6 +29,8 @@ def short(url):
     escaped = url
     if "https://" not in url and "http://" not in url:
         escaped = "http://" + url
+    if "it-m.banggood.com" in escaped:
+        escaped = escaped.replace("it-m.banggood.com", "banggood.com")
 
     headers = {
         "Authorization": settings["bitlyToken"],
