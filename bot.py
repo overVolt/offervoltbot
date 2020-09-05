@@ -70,7 +70,11 @@ def reply(msg):
     # Rename it-m.banggood.com to desktop banggood.com
     if "it-m.banggood.com" in text:
         text = text.replace("it-m.banggood.com", "banggood.com")
-
+        
+    # Rename m.banggood.com to desktop banggood.com
+    if "m.banggood.com" in text:
+        text = text.replace("m.banggood.com", "banggood.com")
+        
     ## Messaggio da canale interno
     if chatId == -1001298078411:
         print(msg)
