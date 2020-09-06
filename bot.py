@@ -41,7 +41,9 @@ messages = {
     "msg_sent": "<b>Messaggio inviato!</b>\n"
                 "Un membro del team ti risponderà il prima possibile.\n"
                 "Ricordati che siamo in pochi a gestire tutte le richieste che ci arrivano: ci piacerebbe rispondere a "
-                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!",
+                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!"
+                "Se non ricevi risposta entro qualche giorno probabilmente ci è sfuggito il tuo messaggio, "
+                "per cui inviacelo di nuovo avendo cura di fornirci tutti i dettagli necessari a soddisfare la tua richiesta.",
     "command_ukn": "🤨 Comando sconosciuto.",
     "muted": "⛔ <b>Sei mutato.</b>\n"
              "Un admin ti ha temporaneamente limitato, quindi non puoi scrivere messaggi diretti allo staff.",
