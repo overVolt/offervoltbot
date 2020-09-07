@@ -40,8 +40,8 @@ messages = {
             "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>",
     "msg_sent": "<b>Messaggio inviato!</b>\n"
                 "Un membro del team ti risponderà il prima possibile.\n"
-                "Ricordati che siamo in pochi a gestire tutte le richieste che ci arrivano: ci piacerebbe rispondere a "
-                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!"
+                "⚠<b>Ricordati che <u>siamo in pochi</u> a gestire tutte le richieste</b> che ci arrivano: <i>ci piacerebbe rispondere a "
+                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!</i>"
                 "Se non ricevi risposta entro qualche giorno probabilmente ci è sfuggito il tuo messaggio, "
                 "per cui inviacelo di nuovo avendo cura di fornirci tutti i dettagli necessari a soddisfare la tua richiesta.",
     "command_ukn": "🤨 Comando sconosciuto.",
