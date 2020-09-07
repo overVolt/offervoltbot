@@ -40,8 +40,8 @@ messages = {
             "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>",
     "msg_sent": "<b>Messaggio inviato!</b>\n"
                 "Un membro del team ti risponderà il prima possibile.\n"
-                "⚠<b>Ricordati che <u>siamo in pochi</u> a gestire tutte le richieste</b> che ci arrivano: <i>ci piacerebbe rispondere a "
-                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!</i>"
+                "⚠️ <b>Ricordati che <u>siamo in pochi</u> a gestire tutte le richieste</b> che ci arrivano: ci piacerebbe rispondere a "
+                "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!\n"
                 "Se non ricevi risposta entro qualche giorno probabilmente ci è sfuggito il tuo messaggio, "
                 "per cui inviacelo di nuovo avendo cura di fornirci tutti i dettagli necessari a soddisfare la tua richiesta.",
     "command_ukn": "🤨 Comando sconosciuto.",
@@ -152,15 +152,21 @@ def reply(msg):
                 # Controlla se è un comando di servizio
                 if text.startswith("/"):
                     if text == "/mute":
-                        origMsg.fromUser.muted = True
-                        bot.sendMessage(chatId, "🔇 Utente mutato.\n"
-                                                "Usa /unmute per smutarlo.")
-                        bot.sendMessage(origMsg.fromUser.chatId, "🔇 Sei stato mutato da un admin.")
+                        if not origMsg.fromUser.muted:
+                            origMsg.fromUser.muted = True
+                            bot.sendMessage(chatId, "🔇 Utente mutato.\n"
+                                                    "Usa /unmute per smutarlo.")
+                            bot.sendMessage(origMsg.fromUser.chatId, "🔇 Sei stato mutato da un admin.")
+                        else:
+                            bot.sendMessage(chatId, "⚠️ Utente già mutato.")
                     elif text == "/unmute":
-                        origMsg.fromUser.muted = False
-                        bot.sendMessage(chatId, "🔉 Utente smutato.\n"
-                                                "Usa /mute per mutarlo di nuovo.")
-                        bot.sendMessage(origMsg.fromUser.chatId, "🔉 Puoi nuovamente inviare messaggi al bot!")
+                        if origMsg.fromUser.muted:
+                            origMsg.fromUser.muted = False
+                            bot.sendMessage(chatId, "🔉 Utente smutato.\n"
+                                                    "Usa /mute per mutarlo di nuovo.")
+                            bot.sendMessage(origMsg.fromUser.chatId, "🔉 Puoi nuovamente inviare messaggi al bot!")
+                        else:
+                            bot.sendMessage(chatId, "⚠️ Utente già smutato.")
                     else:
                         bot.sendMessage(chatId, messages["command_ukn"], parse_mode="HTML")
 
