@@ -271,11 +271,13 @@ def button_press(msg):
         prevText = msg['message']['text']
         bot.answerCallbackQuery(query_id, "Richiesta prenotata!")
         sent = bot.sendMessage(chatId, prevText.replace("Nuovo messaggio!\n", "<b>[Richiesta prenotata]</b>\n"), parse_mode="HTML")
+        bot.sendMessage(chatId, "ℹ️ <b>Risposte Rapide</b>\n"
+                                "<code>Ciao, purtroppo non ho coupon per questo prodotto</code>", parse_mode="HTML")
+        bot.deleteMessage((forwardChannel, message_id))
         dbQuery = select(m for m in Message if m.sentIds[str(forwardChannel)] == message_id)[:]
         if len(dbQuery) > 0:
             origMsg = dbQuery[0]
             origMsg.sentIds = {str(chatId): int(sent['message_id'])}
-        bot.deleteMessage((forwardChannel, message_id))
 
 
 def accept_message(msg):
