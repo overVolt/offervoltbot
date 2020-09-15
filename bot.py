@@ -272,7 +272,7 @@ def button_press(msg):
         bot.answerCallbackQuery(query_id, "Richiesta prenotata!")
         sent = bot.sendMessage(chatId, prevText.replace("Nuovo messaggio!\n", "<b>[Richiesta prenotata]</b>\n"), parse_mode="HTML")
         bot.sendMessage(chatId, "ℹ️ <b>Risposte Rapide</b>\n"
-                                "<code>Ciao, purtroppo non ho coupon per questo prodotto</code>", parse_mode="HTML")
+                                "<code>Ciao, purtroppo non ho coupon per questo prodotto</code>", parse_mode="HTML", disable_notification=True)
         bot.deleteMessage((forwardChannel, message_id))
         dbQuery = select(m for m in Message if m.sentIds[str(forwardChannel)] == message_id)[:]
         if len(dbQuery) > 0:
