@@ -190,6 +190,8 @@ def reply(msg):
                             pass
 
                     bot.deleteMessage((chatId, quotedMessage['message_id']))
+                    bot.deleteMessage((chatId, int(quotedMessage['message_id']+1))) 
+                    #così elimina anche il messaggio sotto con le risposte rapide (compila e controlla se funzia perchè sto editando da github)
 
             except Exception as e:
                 bot.sendMessage(chatId, "😔 <b>Errore nell'invio.</b>\n\n"
