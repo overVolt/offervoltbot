@@ -17,27 +17,23 @@ bot = Bot(settings["token"])
 forwardChannel = settings["forwardChannel"]
 messages = {
     "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"tg://resolve?domain=offerVolt\">offerVolt</a>.\n"
-             "Puoi usarmi per richiedere un consulto, un coupon oppure per segnalare un'offerta.\n"
+             "Puoi usarmi per richiedere un coupon per prodotti Banggood, oppure per segnalare un'offerta.\n"
              "Premi /help per vedere come funziono!",
     "help": "Ciao, sono il bot di richiesta e segnalazione di offerte di overVolt.\n\n"
             "🎟 <b>Come richiedo un coupon?</b>\n"
             "Per richiedere un coupon devi mandarci il link del prodotto, e poi noi provvederemo a ricercare coupon "
             "in giro per i meandri più oscuri di qualche magazzino orientale.\n\n"
+            "<b>Possiamo trovare coupon solo per prodotti Banggood, Gearbest e Geekbuying.</b>\n"
             "Esempio:\n"
             "- <i>Vorrei un coupon per questo prodotto https://link.del.prodotto/</i>\n"
-            "- <i>C'è qualche coupon per questo prodotto? https://link.del.prodotto/</i>\n\n\n"
             "💡 <b>Come richiedo una offerta?</b>\n"
             "Per richiedere una offerta è necessario che tu ci fornisca dei dettagli sul tipo di prodotto che stai "
             "cercando, come per esempio fascia di prezzo e caratteristiche.\n\n"
             "Esempio:\n"
-            "- <i>Vorrei un kit per iniziare a volare in FPV sotto i 200€</i>\n"
-            "- <i>Sto cercando un telefono per mia mamma, voglio spendere massimo 200€</i>\n"
-            "- <i>Sto cercando un tablet per lo studio con la penna inclusa, ho tutto il budget del mondo</i>\n\n\n"
-            "Speriamo di poter essere utili!\n"
-            "<b>Nota: per quanto rapidi possiamo essere, ci arrivano ogni giorno più di 100 richieste diverse e noi "
-            "siamo comunque esseri umani: per favore porta pazienza se non ti rispondiamo subito :)\n"
-            "Potrebbe capitare che in mezzo a tutti i messaggi che ci arrivano ne perdiamo di vista qualcuno: se proprio vedi "
-            "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>",
+            "- <i>Sto cercando un tablet per lo studio con la penna inclusa, voglio spendere massimo 400€</i>\n\n"
+            "<b>Potrebbe capitare che in mezzo a tutti i messaggi che ci arrivano ne perdiamo di vista qualcuno: se proprio vedi "
+            "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>"
+            "<b>Possiamo trovare coupon solo per prodotti Banggood, Gearbest e Geekbuying.</b>",
     "msg_sent": "<b>Messaggio inviato!</b>\n"
                 "Un membro del team ti risponderà il prima possibile.\n"
                 "⚠️ <b>Ricordati che <u>siamo in pochi</u> a gestire tutte le richieste</b> che ci arrivano: ci piacerebbe rispondere a "
