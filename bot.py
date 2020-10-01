@@ -1,5 +1,5 @@
-from telepot import Bot, glance
-from telepot.exception import TelegramError, BotWasBlockedError
+from telepotpro import Bot, glance
+from telepotpro.exception import TelegramError, BotWasBlockedError
 from time import sleep
 from threading import Thread
 from random import choice
@@ -16,23 +16,23 @@ with open(join(dirname(abspath(__file__)), "settings.json")) as settings_file:
 bot = Bot(settings["token"])
 forwardChannel = settings["forwardChannel"]
 messages = {
-    "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"tg://resolve?domain=offerVolt\">offerVolt</a>.\n"
+    "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"t.me/offerVolt\">offerVolt</a>.\n"
              "Puoi usarmi per richiedere un coupon per prodotti Banggood, oppure per segnalare un'offerta.\n"
              "Premi /help per vedere come funziono!",
     "help": "Ciao, sono il bot di richiesta e segnalazione di offerte di overVolt.\n\n"
             "🎟 <b>Come richiedo un coupon?</b>\n"
             "Per richiedere un coupon devi mandarci il link del prodotto, e poi noi provvederemo a ricercare coupon "
-            "in giro per i meandri più oscuri di qualche magazzino orientale.\n\n"
-            "<b>Possiamo trovare coupon solo per prodotti Banggood, Gearbest e Geekbuying.</b>\n"
+            "in giro per i meandri più oscuri di qualche magazzino orientale.\n"
+            "<b>Nota: Possiamo trovare coupon solo per prodotti Banggood, Gearbest e Geekbuying.</b>\n\n"
             "Esempio:\n"
-            "- <i>Vorrei un coupon per questo prodotto https://link.del.prodotto/</i>\n"
+            "- <i>Vorrei un coupon per questo prodotto https://link.del.prodotto/</i>\n\n"
             "💡 <b>Come richiedo una offerta?</b>\n"
             "Per richiedere una offerta è necessario che tu ci fornisca dei dettagli sul tipo di prodotto che stai "
             "cercando, come per esempio fascia di prezzo e caratteristiche.\n\n"
             "Esempio:\n"
             "- <i>Sto cercando un tablet per lo studio con la penna inclusa, voglio spendere massimo 400€</i>\n\n"
             "<b>Potrebbe capitare che in mezzo a tutti i messaggi che ci arrivano ne perdiamo di vista qualcuno: se proprio vedi "
-            "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>"
+            "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>\n"
             "<b>Possiamo trovare coupon solo per prodotti Banggood, Gearbest e Geekbuying.</b>",
     "msg_sent": "<b>Messaggio inviato!</b>\n"
                 "Un membro del team ti risponderà il prima possibile.\n"
@@ -186,7 +186,7 @@ def reply(msg):
                             pass
 
                     bot.deleteMessage((chatId, quotedMessage['message_id']))
-                    bot.deleteMessage((chatId, int(quotedMessage['message_id']+1))) 
+                    bot.deleteMessage((chatId, int(quotedMessage['message_id'])+1))
                     #così elimina anche il messaggio sotto con le risposte rapide (compila e controlla se funzia perchè sto editando da github)
 
             except Exception as e:
