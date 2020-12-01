@@ -17,7 +17,8 @@ bot = Bot(settings["token"])
 forwardChannel = settings["forwardChannel"]
 messages = {
     "start": "<b>Ciao, {}!</b> Sono il bot di <a href=\"t.me/offerVolt\">offerVolt</a>.\n"
-             "Puoi usarmi per richiedere un coupon per prodotti Banggood, oppure per segnalare un'offerta.\n"
+             "Puoi usarmi per richiedere un coupon per prodotti <b>Banggood</b>, oppure per segnalare un'offerta.\n"
+             "<b>Ricorda che abbiamo coupon solo per Banggood, gearbest o geekbuying, per cui non richiederci coupon per altri store come Amazon o AliExpress.</b>\n"
              "Premi /help per vedere come funziono!",
     "help": "Ciao, sono il bot di richiesta e segnalazione di offerte di overVolt.\n\n"
             "🎟 <b>Come richiedo un coupon?</b>\n"
@@ -35,6 +36,7 @@ messages = {
             "che dopo un giorno non ti abbiamo ancora risposto, invia di nuovo il messaggio e ti risponderemo!</b>\n"
             "<b>Possiamo trovare coupon solo per prodotti Banggood, Gearbest e Geekbuying.</b>",
     "msg_sent": "<b>Messaggio inviato!</b>\n"
+                "<b>Ricorda che abbiamo coupon solo per Banggood, gearbest o geekbuying, per cui non richiederci coupon per altri store come Amazon o AliExpress.</b>\n"
                 "Un membro del team ti risponderà il prima possibile.\n"
                 "⚠️ <b>Ricordati che <u>siamo in pochi</u> a gestire tutte le richieste</b> che ci arrivano: ci piacerebbe rispondere a "
                 "tutti in poco tempo ma è impossibile, porta pazienza se non rispondiamo subito!\n"
@@ -44,8 +46,7 @@ messages = {
     "muted": "⛔ <b>Sei mutato.</b>\n"
              "Un admin ti ha temporaneamente limitato, quindi non puoi scrivere messaggi diretti allo staff.",
     "thanks": [
-        "Grazie!", "Grazie per la segnalazione!", "Grazie dell'aiuto!",
-        "Grazie 💪🏻", "Grazie per la segnalazione 💚", "Grazie dell'aiuto 💚"
+        "Richiesta effettuata!", "Grazie per la richiesta!", "Grazie dell'aiuto!"
     ]
 }
 
@@ -266,16 +267,19 @@ def button_press(msg):
             bot.editMessageReplyMarkup((forwardChannel, message_id), keyboards.error(message_id))
 
     elif button == "richiesta":
-        prevText = msg['message']['text']
-        bot.answerCallbackQuery(query_id, "Richiesta prenotata!")
-        sent = bot.sendMessage(chatId, prevText.replace("Nuovo messaggio!\n", "<b>[Richiesta prenotata]</b>\n"), parse_mode="HTML")
-        bot.sendMessage(chatId, "ℹ️ <b>Risposte Rapide</b>\n"
-                                "<code>Ciao, purtroppo non ho coupon per questo prodotto</code>", parse_mode="HTML", disable_notification=True)
-        bot.deleteMessage((forwardChannel, message_id))
-        dbQuery = select(m for m in Message if m.sentIds[str(forwardChannel)] == message_id)[:]
-        if len(dbQuery) > 0:
-            origMsg = dbQuery[0]
-            origMsg.sentIds = {str(chatId): int(sent['message_id'])}
+        try:
+            prevText = msg['message']['text']
+            bot.answerCallbackQuery(query_id, "Richiesta prenotata!")
+            sent = bot.sendMessage(chatId, prevText.replace("Nuovo messaggio!\n", "<b>[Richiesta prenotata]</b>\n"), parse_mode="HTML")
+            bot.sendMessage(chatId, "ℹ️ <b>Risposte Rapide</b>\n"
+                                    "<code>Ciao, purtroppo non ho coupon per questo prodotto</code>", parse_mode="HTML", disable_notification=True)
+            bot.deleteMessage((forwardChannel, message_id))
+            dbQuery = select(m for m in Message if m.sentIds[str(forwardChannel)] == message_id)[:]
+            if len(dbQuery) > 0:
+                origMsg = dbQuery[0]
+                origMsg.sentIds = {str(chatId): int(sent['message_id'])}
+        except e as Exception:
+            print(e)
 
 
 def accept_message(msg):
