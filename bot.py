@@ -278,7 +278,7 @@ def button_press(msg):
             if len(dbQuery) > 0:
                 origMsg = dbQuery[0]
                 origMsg.sentIds = {str(chatId): int(sent['message_id'])}
-        except e as Exception:
+        except Exception as e:
             print(e)
 
 
